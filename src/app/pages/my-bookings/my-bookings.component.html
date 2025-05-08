@@ -1,0 +1,48 @@
+<div class="home-container">
+    <div class="overlay">
+      <div class="booking-container">
+        <h1 class="booking-title">My Booking</h1>
+  
+        <div class="booking-summary-container" *ngIf="bookingDetails">
+          <h2>Booking Summary</h2>
+          <p><strong>Passenger:</strong> {{ bookingDetails.bookingdetails_passenger_name }}</p>
+          <p><strong>Booking ID:</strong> {{ bookingDetails.bookingdetails_booking_id }}</p>
+          <p><strong>Seat ID:</strong> {{ bookingDetails.bookingdetails_seat_id }}</p>
+          <p><strong>Fare:</strong> ₹{{ bookingDetails.bookingdetails_fare }}</p>
+          <p><strong>Booked At:</strong> {{ bookingDetails.created_at | date:'medium' }}</p>
+        </div>
+    
+        <div *ngIf="error" class="error-message">
+          {{ error }}
+        </div>
+  
+        <div class="card">
+          <h2 class="card-title">Flight Details</h2>
+          <p><strong>Flight:</strong> {{ bookingData?.flight_name }}</p>
+          <p><strong>Departure:</strong> {{ bookingData?.departure_time }}</p>
+          <p><strong>Arrival:</strong> {{ bookingData?.arrival_time }}</p>
+        </div>
+  
+        <div class="card">
+          <h2 class="card-title">Passenger Details</h2>
+          <table class="passenger-table">
+            <thead>
+              <tr>
+                <th>Seat Number</th>
+                <th>Passenger Name</th>
+                <th>Fare</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let passenger of bookingData?.passengers">
+                <td>{{ passenger.seat_number }}</td>
+                <td>{{ passenger.name }}</td>
+                <td>₹{{ passenger.fare }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
