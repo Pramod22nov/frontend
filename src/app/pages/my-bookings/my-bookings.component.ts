@@ -1,6 +1,6 @@
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 
@@ -10,7 +10,7 @@ import { DataService } from '../../services/data.service';
   templateUrl: './my-bookings.component.html',
   styleUrl: './my-bookings.component.css'
 })
-export class MyBookingsComponent implements OnInit {
+export class MyBookingsComponent {
   http = inject(HttpClient);
   route = inject(ActivatedRoute);
   router = inject(Router);
