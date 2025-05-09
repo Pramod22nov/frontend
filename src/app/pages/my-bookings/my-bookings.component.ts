@@ -41,12 +41,10 @@ export class MyBookingsComponent {
           if (res.status_code === '200') {
             const data = res.data || [];
 
-            // Sort by booking date (latest first)
             data.sort((a: any, b: any) =>
               new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             );
 
-            // Split into last and previous bookings
             this.lastBooking = data.length > 0 ? data[0] : null;
             this.previousBookings = data.length > 1 ? data.slice(1) : [];
           }
