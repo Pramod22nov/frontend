@@ -6,7 +6,7 @@ import { DataService } from '../../services/data.service';
 
 @Component({
   selector: 'app-my-bookings',
-  imports: [NgFor, NgIf ,DatePipe],
+  imports: [NgFor, NgIf, DatePipe],
   templateUrl: './my-bookings.component.html',
   styleUrl: './my-bookings.component.css'
 })
@@ -16,35 +16,75 @@ export class MyBookingsComponent {
   router = inject(Router);
   Data = inject(DataService);
 
-  bookingId: number = 0;
-  bookingData: any = null;
-  error: string = '';
-  bookingDetailsId: any;
-  bookingDetails: any;
+  bookings: any[] = [];
+  userId: number = 0;
+  lastBooking: any = null;
+  previousBookings: any[] = [];
+  loading: boolean = true;
 
   ngOnInit(): void {
-    const state = history.state;
-    if (state?.bookingDetailsId) {
-      this.bookingDetailsId = state.bookingDetailsId;
-      this.getBookingDetailsById();
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      this.userId = parsedUser.id;
+      this.getBookingHistory();
     } else {
-      this.error = 'No Booking Detail ID provided';
+      this.loading = false;
+      console.error('User not logged in or missing from localStorage');
     }
   }
 
-  getBookingDetailsById() {
-    this.http.get<any>(`http://localhost:5000/v1/api/details/details/${this.bookingDetailsId}`).subscribe({
-      next: (res) => {
-        if (res.status_code === '200' && res.data?.length) {
-          this.bookingDetails = res.data[0];
-        } else {
-          this.error = res.message || 'No data found';
+  getBookingHistory(): void {
+    this.http.get<any>(`http://localhost:5000/v1/api/details/bookings/${this.userId}`)
+      .subscribe({
+        next: (res) => {
+          if (res.status_code === '200') {
+            const data = res.data || [];
+
+            // Sort by booking date (latest first)
+            data.sort((a: any, b: any) =>
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            );
+
+            // Split into last and previous bookings
+            this.lastBooking = data.length > 0 ? data[0] : null;
+            this.previousBookings = data.length > 1 ? data.slice(1) : [];
+          }
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching bookings', err);
+          this.loading = false;
         }
-      },
-      error: () => {
-        this.error = 'Failed to fetch booking details';
+      });
+  }
+
+  cancelBooking(bookingId: number): void {
+    if (confirm("Are you sure you want to cancel this booking?")) {
+      this.http.put(`http://localhost:5000/v1/api/booking/delete/${bookingId}`, {})
+        .subscribe({
+          next: (res: any) => {
+            alert("Booking cancelled successfully");
+            this.getBookingHistory(); 
+          },
+          error: () => alert("Failed to cancel booking")
+        });
+    }
+  }
+
+  updateBooking(): void {
+    const booking = this.lastBooking;
+    const passengers = booking.passengers.map((p: any) => ({
+      name: p.bookingdetails_passenger_name,
+      seat_number: p.seat_number
+    }));
+
+    this.router.navigate(['/book-ticket/:flightScheduleId'], {
+      state: {
+        booking_id: booking.id,
+        schedule_id: booking.booking_schedule_id,
+        passengers: passengers
       }
     });
   }
-  
 }
