@@ -37,7 +37,33 @@ export class BookTicketComponent {
   baseFare: number = 0;
   tax: number = 0;
   totalAmount: number = 0;
-  //flightschedule
+  
+  ngOnInit(): void {
+    this.flightScheduleId = this.route.snapshot.paramMap.get('flightScheduleId') || '';
+    const flightData = history.state?.flightDetails;
+    this.fetchSeats();
+    // this.fetchSeatsAndRedirect();
+      
+    if (flightData) {
+      this.flightDetails = flightData;
+      this.Data.fromCity.subscribe(city => {
+        console.log("FROM city from service:", city);
+        this.flightDetails.from_city = city;
+      });
+      this.Data.toCity.subscribe(city => {
+        console.log("toCity from service:", city);
+        this.flightDetails.to_city = city;
+      });
+      this.Data.date.subscribe(date => {
+        this.flightDetails.date = date;
+      })
+      this.baseFare = Number(flightData.schedule_price) || 0;
+      this.recalculateTotal();
+    } else if (this.flightScheduleId) {
+      this.getFlightScheduleDetails();  
+    }
+  }
+
   getFlightScheduleDetails() {
     this.http.get(`http://localhost:5000/v1/api/flight-schedule/schedule/${this.flightScheduleId}`)
       .subscribe(async (res: any) => {
@@ -69,7 +95,7 @@ export class BookTicketComponent {
         }
       });
   }  
-  //seaats
+ 
   fetchSeats() {
     this.http.get(`http://localhost:5000/v1/api/flight-schedule/seats/${this.flightScheduleId}`)
       .subscribe((res: any) => {
@@ -92,7 +118,7 @@ export class BookTicketComponent {
         this.seatRows = seatRows;
       });
   }
-  //seats-avalaiblites
+  
   toggleSeatSelection(seat: any) {
     if (seat.status === 'booked') return;
   
@@ -114,32 +140,6 @@ export class BookTicketComponent {
     const fare = this.baseFare * seatCount;
     this.tax = fare * 0.18; 
     this.totalAmount = fare + this.tax;
-  }
-
-  ngOnInit(): void {
-    this.flightScheduleId = this.route.snapshot.paramMap.get('flightScheduleId') || '';
-    const flightData = history.state?.flightDetails;
-    this.fetchSeats();
-    // this.fetchSeatsAndRedirect();
-      
-    if (flightData) {
-      this.flightDetails = flightData;
-      this.Data.fromCity.subscribe(city => {
-        console.log("FROM city from service:", city);
-        this.flightDetails.from_city = city;
-      });
-      this.Data.toCity.subscribe(city => {
-        console.log("toCity from service:", city);
-        this.flightDetails.to_city = city;
-      });
-      this.Data.date.subscribe(date => {
-        this.flightDetails.date = date;
-      })
-      this.baseFare = Number(flightData.schedule_price) || 0;
-      this.recalculateTotal();
-    } else if (this.flightScheduleId) {
-      this.getFlightScheduleDetails();  
-    }
   }
 
   getCityNameById(id: number): Promise<string> {
@@ -233,7 +233,6 @@ export class BookTicketComponent {
         alert('Booking failed. Please try again.');
       }
     });
-
   }
   
   fetchSeatsAndRedirect() {
@@ -254,8 +253,7 @@ export class BookTicketComponent {
           });
         }
         this.seatRows = seatRows;
-        // const bookingId = res.data.booking_id;
-        // this.router.navigate(['/payment']);     
+        // const bookingId = res.data.booking_id;    
       });
   }
 } 
