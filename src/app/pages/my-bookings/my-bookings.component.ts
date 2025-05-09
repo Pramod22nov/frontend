@@ -58,7 +58,7 @@ export class MyBookingsComponent {
   }
 
   cancelBooking(bookingId: number): void {
-    if (confirm("Are you sure you want to cancel this booking?")) {
+    if (confirm("Are you sure?")) {
       this.http.put(`http://localhost:5000/v1/api/booking/delete/${bookingId}`, {})
         .subscribe({
           next: (res: any) => {
