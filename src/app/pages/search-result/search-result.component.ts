@@ -46,7 +46,7 @@ export class SearchResultComponent implements OnInit {
         const toCityObj = this.cityList.find(city => city.id === +toId);
 
         this.fromCity = fromCityObj ? fromCityObj.city_name : 'Unknown';
-         this.toCity = toCityObj ? toCityObj.city_name : 'Unknown';
+        this.toCity = toCityObj ? toCityObj.city_name : 'Unknown';
         this.Data.fromCity.next(this.fromCity)
         this.Data.toCity.next(this.toCity)
         if (!this.fromCity || !this.toCity) {

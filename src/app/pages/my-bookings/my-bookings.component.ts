@@ -40,6 +40,7 @@ export class MyBookingsComponent {
         next: (res) => {
           if (res.status_code === '200') {
             const data = res.data || [];
+            console.log("data", data);
 
             data.sort((a: any, b: any) =>
               new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -58,14 +59,29 @@ export class MyBookingsComponent {
   }
 
   cancelBooking(bookingId: number): void {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('User not logged in. Please login again.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     if (confirm("Are you sure?")) {
-      this.http.put(`http://localhost:5000/v1/api/booking/delete/${bookingId}`, {})
+      this.http.put('http://localhost:5000/v1/api/booking/delete', {
+          booking_id: bookingId,
+          user_id: this.userId
+        })
         .subscribe({
           next: (res: any) => {
             alert("Booking cancelled successfully");
             this.getBookingHistory(); 
           },
-          error: () => alert("Failed to cancel booking")
+          
+          error: (err) => {
+          console.error('Error fetching cancel bookings', err);
+          this.loading = false;
+        }
         });
     }
   }

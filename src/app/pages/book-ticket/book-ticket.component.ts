@@ -40,7 +40,17 @@ export class BookTicketComponent {
   
   ngOnInit(): void {
     this.flightScheduleId = this.route.snapshot.paramMap.get('flightScheduleId') || '';
-    const flightData = history.state?.flightDetails;
+    const flightData = history.state?.flightDetails; 
+    const bookingState = history.state;
+
+      if (bookingState && bookingState.passengers) {
+        this.passengerDetails = bookingState.passengers.map((p: any) => ({
+          seat: p.seat_number,
+          name: p.name
+        }));
+        this.selectedSeats = bookingState.passengers.map((p: any) => p.seat_number);
+        this.totalAmount = parseFloat(bookingState.total_price);
+      }
     this.fetchSeats();
     // this.fetchSeatsAndRedirect();
       
@@ -102,11 +112,19 @@ export class BookTicketComponent {
         const allSeats = res?.data || [];
   
         const seatRows = [];
-        for (let i = 0; i < allSeats.length; i += 6) {
-          const rowSeats = allSeats.slice(i, i + 6).map((seat: any) => ({
+         for (let i = 0; i < allSeats.length; i += 6) {
+        const rowSeats = allSeats.slice(i, i + 6).map((seat: any) => {
+          let status = 'available';
+          if (seat.seat_is_booked) {
+            status = '';
+          } else if (this.selectedSeats.includes(seat.seat_number)) {
+            status = 'selected';
+          }
+          return {
             label: seat.seat_number,
-            status: seat.seat_is_booked ? 'booked' : 'available'
-          }));
+            status: status
+          };
+        });
   
           seatRows.push({
             label: `Row ${Math.floor(i / 6) + 1}`,

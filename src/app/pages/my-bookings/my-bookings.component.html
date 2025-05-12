@@ -13,7 +13,9 @@
           <h3>Booking ID: {{ lastBooking.id }}</h3>
           <p><strong>Total Price:</strong> ₹{{ lastBooking.booking_total_price }}</p>
           <p><strong>Refund Status:</strong> {{ lastBooking.booking_refund_status }}</p>
+          <p><strong>Booking Status:</strong> {{ lastBooking.booking_status }}</p>
           <p><strong>Booking Date:</strong> {{ lastBooking.created_at | date:'medium' }}</p>
+          
 
           <div class="passenger-section">
             <h4>Passengers:</h4>
@@ -49,8 +51,9 @@
             <h3>Booking ID: {{ booking.id }}</h3>
             <p><strong>Total Price:</strong> ₹{{ booking.booking_total_price }}</p>
             <p><strong>Refund Status:</strong> {{ booking.booking_refund_status }}</p>
+            <p><strong>Booking Status:</strong> {{ lastBooking.booking_status }}</p> 
             <p><strong>Booking Date:</strong> {{ booking.created_at | date:'medium' }}</p>
-
+            
             <div class="passenger-section">
               <h4>Passengers:</h4>
               <table>

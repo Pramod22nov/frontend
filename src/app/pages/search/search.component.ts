@@ -67,9 +67,11 @@ export class SearchComponent implements OnInit {
     });
   }
 
+  
+
   filterCities(query: string, type: 'from' | 'to') {
-    const filtered = this.cityList.filter(city =>
-      city.city_name.toLowerCase().startsWith(query.toLowerCase())
+    const filtered = this.cityList.filter(city => 
+       city.city_name.length > 2 && city.city_name.toLowerCase().startsWith(query.toLowerCase())
     );
     
     if (type === 'from') {

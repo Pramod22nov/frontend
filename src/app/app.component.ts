@@ -19,6 +19,11 @@ export class AppComponent {
 
   logout(){
     localStorage.clear();
+    alert('Logout Successfully!!!')
     this.router.navigate(['/search']);
+  }
+
+  mybookings() {
+    this.router.navigate(['/my-bookings'])
   }
 }
