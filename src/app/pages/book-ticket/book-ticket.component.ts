@@ -41,18 +41,7 @@ export class BookTicketComponent {
   ngOnInit(): void {
     this.flightScheduleId = this.route.snapshot.paramMap.get('flightScheduleId') || '';
     const flightData = history.state?.flightDetails; 
-    const bookingState = history.state;
-
-      if (bookingState && bookingState.passengers) {
-        this.passengerDetails = bookingState.passengers.map((p: any) => ({
-          seat: p.seat_number,
-          name: p.name
-        }));
-        this.selectedSeats = bookingState.passengers.map((p: any) => p.seat_number);
-        this.totalAmount = parseFloat(bookingState.total_price);
-      }
-    this.fetchSeats();
-    // this.fetchSeatsAndRedirect();
+    this.fetchSeatsAndRedirect();
       
     if (flightData) {
       this.flightDetails = flightData;
@@ -61,7 +50,7 @@ export class BookTicketComponent {
         this.flightDetails.from_city = city;
       });
       this.Data.toCity.subscribe(city => {
-        console.log("toCity from service:", city);
+        console.log("To from service:", city);
         this.flightDetails.to_city = city;
       });
       this.Data.date.subscribe(date => {
@@ -105,54 +94,55 @@ export class BookTicketComponent {
         }
       });
   }  
- 
-  fetchSeats() {
-    this.http.get(`http://localhost:5000/v1/api/flight-schedule/seats/${this.flightScheduleId}`)
-      .subscribe((res: any) => {
-        const allSeats = res?.data || [];
-  
-        const seatRows = [];
-         for (let i = 0; i < allSeats.length; i += 6) {
+
+  fetchSeatsAndRedirect() {
+  const timestamp = new Date().getTime();
+
+  this.selectedSeats = [];
+  this.passengerDetails = [];
+
+  this.http.get(`http://localhost:5000/v1/api/flight-schedule/seats/${this.flightScheduleId}?t=${timestamp}`)
+    .subscribe((res: any) => {
+      const allSeats = res?.data || [];
+      const seatRows = [];
+
+      for (let i = 0; i < allSeats.length; i += 6) {
         const rowSeats = allSeats.slice(i, i + 6).map((seat: any) => {
-          let status = 'available';
-          if (seat.seat_is_booked) {
-            status = '';
-          } else if (this.selectedSeats.includes(seat.seat_number)) {
-            status = 'selected';
-          }
+          const isBooked = seat.seat_is_booked === true;
+
           return {
             label: seat.seat_number,
-            status: status
+            status: isBooked ? 'booked' : 'available'  
           };
         });
-  
-          seatRows.push({
-            label: `Row ${Math.floor(i / 6) + 1}`,
-            left: rowSeats.slice(0, 3),
-            right: rowSeats.slice(3, 6)
-          });
-        }
-  
-        this.seatRows = seatRows;
-      });
+
+        seatRows.push({
+          label: `Row ${Math.floor(i / 6) + 1}`,
+          left: rowSeats.slice(0, 3),
+          right: rowSeats.slice(3, 6)
+        });
+      }
+
+      this.seatRows = [...seatRows]; 
+    });
   }
-  
+
   toggleSeatSelection(seat: any) {
-    if (seat.status === 'booked') return;
-  
-    if (seat.status === 'selected') {
-      seat.status = 'available';
-      this.selectedSeats = this.selectedSeats.filter(s => s !== seat.label);
-      this.passengerDetails = this.passengerDetails.filter(p => p.seat !== seat.label);
-    } else {
-      seat.status = 'selected';
-      this.selectedSeats.push(seat.label);
-      this.passengerDetails.push({ seat: seat.label, name: '' });
-    }
-  
-    this.recalculateTotal();
+      if (seat.status === 'booked') return; 
+
+      if (seat.status === 'selected') {
+        seat.status = 'available';
+        this.selectedSeats = this.selectedSeats.filter(s => s !== seat.label);
+        this.passengerDetails = this.passengerDetails.filter(p => p.seat !== seat.label);
+      } else if (seat.status === 'available') {
+        seat.status = 'selected';
+        this.selectedSeats.push(seat.label);
+        this.passengerDetails.push({ seat: seat.label, name: '' });
+      }
+
+      this.recalculateTotal();
   }
-  
+
   recalculateTotal() {
     const seatCount = this.selectedSeats.length;
     const fare = this.baseFare * seatCount;
@@ -232,6 +222,7 @@ export class BookTicketComponent {
         this.selectedSeats = [];
         this.passengerDetails = [];
         this.fetchSeatsAndRedirect();
+        console.log(res.data);
         this.router.navigate(['/payment'], {
           state: {
             booking_user_id: user_id,
@@ -251,28 +242,6 @@ export class BookTicketComponent {
         alert('Booking failed. Please try again.');
       }
     });
-  }
-  
-  fetchSeatsAndRedirect() {
-    this.http.get(`http://localhost:5000/v1/api/flight-schedule/seats/${this.flightScheduleId}`)
-      .subscribe((res: any) => {
-        const allSeats = res?.data || [];
-        const seatRows = [];
-        for (let i = 0; i < allSeats.length; i += 6) {
-          const rowSeats = allSeats.slice(i, i + 6).map((seat: any) => ({
-            label: seat.seat_number,
-            status: seat.seat_is_booked ? 'booked' : 'available'
-          }));
-  
-          seatRows.push({
-            label: `Row ${Math.floor(i / 6) + 1}`,
-            left: rowSeats.slice(0, 3),
-            right: rowSeats.slice(3, 6)
-          });
-        }
-        this.seatRows = seatRows;
-        // const bookingId = res.data.booking_id;    
-      });
   }
 } 
   

@@ -47,6 +47,7 @@ export class MyBookingsComponent {
             );
 
             this.lastBooking = data.length > 0 ? data[0] : null;
+            // console.log("lastBookings",this.lastBooking);
             this.previousBookings = data.length > 1 ? data.slice(1) : [];
           }
           this.loading = false;
@@ -84,21 +85,5 @@ export class MyBookingsComponent {
         }
         });
     }
-  }
-
-  updateBooking(): void {
-    const booking = this.lastBooking;
-    const passengers = booking.passengers.map((p: any) => ({
-      name: p.bookingdetails_passenger_name,
-      seat_number: p.seat_number
-    }));
-
-    this.router.navigate(['/book-ticket/:flightScheduleId'], {
-      state: {
-        booking_id: booking.id,
-        schedule_id: booking.booking_schedule_id,
-        passengers: passengers
-      }
-    });
   }
 }
