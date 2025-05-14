@@ -31,6 +31,7 @@
 
 .card:hover {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  background-position: 0%;
 }
 
 .flight-info-row {
@@ -99,4 +100,30 @@
   .btn-primary {
     width: 100%;
   }
+}
+
+.booking-scroll-container {
+  max-height: 100vh;
+  padding: 20px;
+  width: 1000px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.booking-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.booking-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.booking-scroll-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.booking-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
