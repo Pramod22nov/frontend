@@ -94,6 +94,13 @@ export class BookTicketComponent {
         }
       });
   }  
+  
+  getCityNameById(id: number): Promise<string> {
+    return this.http.get<any>(`http://localhost:5000/v1/api/city/${id}`)  
+      .toPromise()
+      .then(res => res?.data?.city_name || 'Unknown')
+      .catch(() => 'Unknown');
+  }
 
   fetchSeatsAndRedirect() {
   const timestamp = new Date().getTime();
@@ -148,13 +155,6 @@ export class BookTicketComponent {
     const fare = this.baseFare * seatCount;
     this.tax = fare * 0.18; 
     this.totalAmount = fare + this.tax;
-  }
-
-  getCityNameById(id: number): Promise<string> {
-    return this.http.get<any>(`http://localhost:5000/v1/api/city/${id}`)  
-      .toPromise()
-      .then(res => res?.data?.city_name || 'Unknown')
-      .catch(() => 'Unknown');
   }
   
   confirmBooking() {
