@@ -30,6 +30,7 @@ export class VerifyOtpComponent {
           this.router.navigate(['/login']);
         } else {
           this.errorMessage = res.message;
+          this.router.navigate(['/verify-otp'])
         }
       },
       error: () => {
