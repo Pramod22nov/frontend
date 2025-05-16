@@ -119,7 +119,7 @@ export class BookTicketComponent {
 
           return {
             label: seat.seat_number,
-            status: isBooked ? 'booked' : 'available'  
+            status: isBooked === true ? 'booked' : 'available'
           };
         });
 
@@ -135,20 +135,24 @@ export class BookTicketComponent {
   }
 
   toggleSeatSelection(seat: any) {
-      if (seat.status === 'booked') return; 
+  if (seat.status === 'booked') return;
 
-      if (seat.status === 'selected') {
-        seat.status = 'available';
-        this.selectedSeats = this.selectedSeats.filter(s => s !== seat.label);
-        this.passengerDetails = this.passengerDetails.filter(p => p.seat !== seat.label);
-      } else if (seat.status === 'available') {
-        seat.status = 'selected';
-        this.selectedSeats.push(seat.label);
-        this.passengerDetails.push({ seat: seat.label, name: '' });
-      }
+  if (seat.status === 'selected') {
+    seat.status = 'available';
 
-      this.recalculateTotal();
+    this.selectedSeats = this.selectedSeats.filter(label => label !== seat.label);
+
+    this.passengerDetails = this.passengerDetails.filter(p => p.seat !== seat.label);
+  } 
+  else if (seat.status === 'available') {
+    seat.status = 'selected';
+    this.selectedSeats.push(seat.label);
+    this.passengerDetails.push({ seat: seat.label, name: '' });
   }
+
+  this.recalculateTotal();
+}
+
 
   recalculateTotal() {
     const seatCount = this.selectedSeats.length;
