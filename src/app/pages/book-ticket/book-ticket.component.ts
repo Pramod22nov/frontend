@@ -108,7 +108,7 @@ export class BookTicketComponent {
   this.selectedSeats = [];
   this.passengerDetails = [];
 
-  this.http.get(`http://localhost:5000/v1/api/flight-schedule/seats/${this.flightScheduleId}?t=${timestamp}`)
+  this.http.get(`http://localhost:5000/v1/api/flight-schedule/seats/${this.flightScheduleId}`)
     .subscribe((res: any) => {
       const allSeats = res?.data || [];
       const seatRows = [];
