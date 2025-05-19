@@ -85,6 +85,7 @@ export class SearchResultComponent implements OnInit {
           this.flights = res.data;
           this.flights.forEach(flight => this.fetchAirplaneName(flight.schedule_airplane_id));
         } else {
+          console.log("res", res);
           console.error('Error fetching flight schedules:', res.message);
         }
       }, error => {
