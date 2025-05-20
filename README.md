@@ -1,59 +1,116 @@
-# Frontend
+# ✈️ Flight Booking System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+A full-stack flight booking application that allows users to search for flights, select seats, add passenger details, book tickets, make online payments, view bookings, and manage cancellations. This project uses **Angular** for the frontend, **Node.js (Express)** for the backend, and **PostgreSQL** as the database.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Features
+
+- 🔐 **User Registration & Login** with OTP Email Verification  
+- 📍 **Search Flights** by Source & Destination Cities with Date Filter  
+- 🛫 **Flight Selection** from available options  
+- 💺 **Seat Selection** with real-time seat status  
+- 👤 **Passenger Details** form for each seat selected  
+- 🧾 **Booking Confirmation** with auto-generated total fare and GST  
+- 💳 **Online Payment Only** (no cash mode supported)  
+- 🔁 **Update or Cancel Latest Booking**  
+- 📂 **View Past and Current Bookings**
+
+---
+
+## 🛠️ Tech Stack
+
+### 🔷 Frontend
+- [Angular](https://angular.io/) (v15+)
+- Bootstrap / CSS for styling
+- Template-driven forms
+
+### 🔶 Backend
+- [Node.js](https://nodejs.org/)
+- [Express](https://expressjs.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- Nodemailer (for OTP email)
+- JWT (Authentication)
+
+### 🔧 Tools
+- [Postman](https://www.postman.com/) – for testing APIs
+- Local development using:
+  - Frontend: `http://localhost:4200`
+  - Backend: `http://localhost:5000`
+
+---
+
+---
+
+## 🔄 Booking Flow (Frontend UI)
+
+1. ✅ **User Registration/Login** (with OTP verification)
+2. 🔍 **Search Flights** by selecting:
+   - Source city
+   - Destination city
+   - Date
+3. 🛬 **Select a Flight**
+4. 🪑 **Choose one or multiple seats**
+5. ✍️ **Enter Passenger Details** for each seat
+6. 📦 **Confirm Booking** – backend stores booking, seat status, and passenger details
+7. 💳 **Make Payment** – online mode only
+8. 🧾 **Booking Receipt** is generated
+9. 🔁 **User Dashboard**:
+   - View **current** or **past** bookings
+   - **Cancel** or **Update** the latest trip if needed
+
+---
+
+## 🧪 API Testing (with Postman)
+
+- Base URL: `http://localhost:5000/v1/api/`
+- Use JWT token in `Authorization` header
+- Available endpoints:
+  - `/register` – Register user
+  - `/verify-otp` – Verify email OTP
+  - `/login` – Login with JWT token
+  - `/flight/search` – Search available flights
+  - `/booking/create` – Book flight
+  - `/booking/update` – Update latest booking
+  - `/booking/cancel` – Cancel latest booking
+  - `/booking/user` – Get all bookings of user
+
+---
+
+## 💻 Setup Instructions
+
+### 🔹 Backend
 
 ```bash
+cd backend
+npm install
+npm run dev
+
+### 🔹 Frontend
+
+cd frontend
+npm install
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## Code scaffolding
+🧱 Database
+PostgreSQL schema includes:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+users, airplanes, flight_schedules, cities, seats, bookings, booking_details, payments
 
-```bash
-ng generate component component-name
-```
+Add your database credentials in backend config
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Sample data for cities and airplanes should be inserted manually or via seed scripts
 
-```bash
-ng generate --help
-```
+📌 Notes
+OTP is valid for 30 minutes
 
-## Building
+Payment must be completed after booking – no cash option
 
-To build the project run:
+Canceled bookings are not deleted but marked with refund status
 
-```bash
-ng build
-```
+Seat status is updated live on booking and reset on cancellation
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+🧑‍💻 Author
+Pramod Sharma
+Master’s Student @ DA-IICT | BCA Graduate 
